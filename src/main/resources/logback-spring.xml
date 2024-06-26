@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+  
+    <!-- log4jdbc 옵션 설정 -->
+    <logger name="jdbc" level="OFF"/>
+    <!-- connection open close 로깅 여부 -->
+    <logger name="jdbc.connection" level="OFF"/>
+    <!-- SQL문만 로깅할지 여부 -->
+    <logger name="jdbc.sqlonly" level="OFF"/>
+	
+    <!-- 쿼리문 수행에 걸린 시간 로깅 -->
+    <logger name="jdbc.sqltiming" level="DEBUG"/>
+    
+    <!-- ResultSet외 모든 JDBC 호출 정보를 로깅할지 여부   -->
+    <logger name="jdbc.audit" level="OFF"/>
+    
+    <!-- ResultSet 포함 모든 JDBC 호출 정보를 로깅 -->
+    <logger name="jdbc.resultset" level="OFF"/>
+    <logger name="jdbc.resultsettable" level="OFF"/>
+    
+	  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%-5level] - %msg%n</Pattern>
+        </layout>
+    </appender>
+  
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <!-- Rolling 정책 -->  
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 7일까지 보관 -->
+            <maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+      
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      
+    </appender>
+  
+
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="ROLLING" />
+    </root>
+
+</configuration>

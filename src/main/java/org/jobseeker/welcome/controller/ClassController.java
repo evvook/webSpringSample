@@ -71,10 +71,11 @@ public class ClassController {
 		return classService.deleteClass(param);
 	}
 	
-//	@ResponseBody
-//	@RequestMapping(value="/excelUpload",method= {RequestMethod.POST})
-//	public Map<String,Object> excelUpload(MultipartHttpServletRequest request) {
-//		MultipartFile file= request.getFile("uploadfile");
-//		return classService.uploadExcel(file);
-//	}
+	@ResponseBody
+	@RequestMapping(value="/excelUpload",method= {RequestMethod.POST})
+	public Map<String,Object> excelUpload(MultipartHttpServletRequest request) {
+		String classId = request.getParameter("class_id");
+		MultipartFile file= request.getFile("uploadfile");
+		return classService.uploadExcel(classId, file);
+	}
 }

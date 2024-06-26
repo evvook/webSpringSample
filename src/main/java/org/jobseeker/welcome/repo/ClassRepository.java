@@ -24,4 +24,6 @@ public interface ClassRepository {
 	public int deleteClass(Map<String, Object> param);
 
 	public int deleteClassStudents(Map<String, Object> param);
+
+	public int insertStudentsExcel(List<Map<String, Object>> excelDataList);
 }

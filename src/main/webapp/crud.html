@@ -223,14 +223,14 @@
 
 	
 	function upload(){
-		ajaxRequest('/excelUpload');
+		ajaxRequestExcelUpload('/excelUpload');
 	}
 
-	function ajaxRequest(url){
-		debugger;
+	function ajaxRequestExcelUpload(url){
 		var file = document.querySelector("#inputExcelFile");
 		var fileData = new FormData();
 		
+		fileData.append("class_id",document.querySelector("#class_id").value);
 		fileData.append("uploadfile",file.files[0]);
 		
 		/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
@@ -240,6 +240,7 @@
 		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 			      if (httpRequest.status === 200) {
 			    	alert("Uploaded");
+			    	updateCallback(httpRequest.response);
 			      } else {
 			        alert('request에 뭔가 문제가 있어요.');
 			      }

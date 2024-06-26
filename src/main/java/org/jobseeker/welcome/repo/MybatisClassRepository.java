@@ -122,4 +122,17 @@ public class MybatisClassRepository implements ClassRepository{
 		}
 		return result;
 	}
+
+	@Override
+	public int insertStudentsExcel(List<Map<String, Object>> excelDataList) {
+		// TODO Auto-generated method stub
+		int result = session.insert(nameSpace+".insertStudentsExcel", excelDataList);
+		if(result == 1) {
+			System.out.println("인서트 성공?");
+		}
+		if(result == 0) {
+			System.out.println("인서트 실패?");
+		}
+		return result;
+	}
 }

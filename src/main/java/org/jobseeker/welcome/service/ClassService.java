@@ -1,12 +1,16 @@
 package org.jobseeker.welcome.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jobseeker.welcome.repo.ClassRepository;
 import org.jobseeker.welcome.repo.WelcomeRepository;
+import org.jobseeker.welcome.utils.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ClassService {
@@ -81,5 +85,36 @@ public class ClassService {
 		int result1 = classRepository.deleteClass(param);
 		int result2 = classRepository.deleteClassStudents(param);
 		return param;
+	}
+
+	public Map<String, Object> uploadExcel(String classId, MultipartFile excelFile) {
+		// TODO Auto-generated method stub
+		if(excelFile.isEmpty()) {
+			return null;
+		}
+		
+		String contentType = excelFile.getContentType();
+		
+		if(!"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(contentType)) {
+			return null;
+		}
+		
+		ExcelUtil excelUtil = new ExcelUtil();
+		
+		List<Map<String,Object>> listMap = excelUtil.getListData(excelFile, 1, 1);
+		
+		List<Map<String,Object>> excelDataList = new ArrayList<Map<String,Object>>();
+		for(Map<String,Object> map:listMap) {
+			Map<String,Object> excelData = new HashMap<String,Object>();
+			excelData.put("classid", classId);
+			excelData.put("stdnumber", map.get("0"));
+			excelData.put("stdname", map.get("1"));
+			excelDataList.add(excelData);
+		}
+		int result1 = classRepository.insertStudentsExcel(excelDataList);
+		
+		Map<String,Object> rtnData = new HashMap<String,Object>();
+		rtnData.put("class_id", classId);
+		return rtnData;
 	}
 }

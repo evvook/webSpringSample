@@ -93,4 +93,19 @@
 			DELETE FROM STUENDTTB
 			WHERE CLASSID = #{class_id}
 	</delete>
+	
+		
+	<insert id="insertStudentsExcel" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			INSERT INTO STUENDTTB(
+				CLASSID,
+				STDNUMBER,
+				STDNAME
+			) VALUES (
+				#{item.classid},
+				#{item.stdnumber},
+				#{item.stdname}
+			)
+		</foreach>
+	</insert>
 </mapper>

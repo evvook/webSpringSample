@@ -1,4 +1,4 @@
-package org.jobseeker.sample;
+package org.jobseeker.welcome;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

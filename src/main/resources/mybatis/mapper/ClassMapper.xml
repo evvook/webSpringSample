@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="ClassMapper">
+
+	<select id="retrieveClassList" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			CLASS_ID,
+			CLASS_NM
+		FROM CLASS
+		WHERE 1=1
+		<if test='class_id != null and !class_id.equals("")'>
+		AND CLASS_ID = #{class_id}
+		</if>
+	</select>
+
+	<select id="retrieveClass" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			CLASS_ID,
+			CLASS_NM,
+			TEACHER
+		FROM CLASS
+		WHERE 1=1
+		AND CLASS_ID = #{class_id}
+	</select>
+	
+	<select id="retrieveStudents" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			STDNUMBER,
+			STDNAME
+		FROM STUENDTTB
+		WHERE 1=1
+		AND CLASSID = #{class_id}
+	</select>
+	
+	<update id="updateClass" parameterType="hashMap">
+		UPDATE CLASS SET
+			CLASS_NM = #{class_nm},
+			TEACHER = #{teacher}
+		WHERE CLASS_ID = #{class_id}
+	</update>
+	
+	<update id="updateStudents" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE STUENDTTB SET
+				STDNAME = #{item.STDNAME}
+			WHERE CLASSID = #{item.class_id}
+			AND STDNUMBER = #{item.STDNUMBER}
+		</foreach>
+	</update>
+	
+	<insert id="insertStudents" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			INSERT INTO STUENDTTB(
+				CLASSID,
+				STDNUMBER,
+				STDNAME
+			) VALUES (
+				#{item.class_id},
+				(SELECT NVL(MAX(STDNUMBER),0)+1 FROM STUENDTTB S WHERE CLASSID = #{item.class_id}),
+				#{item.STDNAME}
+			)
+		</foreach>
+	</insert>
+	
+	<delete id="deleteStudents" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			DELETE FROM STUENDTTB
+			WHERE CLASSID = #{item.class_id}
+			AND STDNUMBER = #{item.STDNUMBER}
+		</foreach>
+	</delete>
+	
+	<insert id="insertClass" parameterType="hashMap">
+		INSERT INTO CLASS(
+			CLASS_ID,
+			CLASS_NM,
+			TEACHER
+		) VALUES (
+			#{class_id},
+			#{class_nm},
+			#{teacher}
+		)
+	</insert>	
+	
+	<delete id="deleteClass" parameterType="hashMap">
+			DELETE FROM CLASS
+			WHERE CLASS_ID = #{class_id}
+	</delete>
+	
+	<delete id="deleteClassStudents" parameterType="hashMap">
+			DELETE FROM STUENDTTB
+			WHERE CLASSID = #{class_id}
+	</delete>
+</mapper>

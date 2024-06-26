@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
 <script src="/js/common.js"></script>
 </head>
 <style>
@@ -18,10 +20,11 @@
 	#listSection{
 		display:flex;
 		flex-direction: column;
-		width:250px;
+		width:300px;
 	}
 	#contentsSection{
 		display:flex;
+		flex-direction: column;
 		width:100%;
 	}
 	
@@ -39,8 +42,46 @@
 	#list li:hover{
 	    background-color:lightgray;
 	}
+	
+	#buttons{
+		display:flex;
+		justify-content: end;
+	}
+	#gridButtons{
+		display:flex;
+		justify-content: end;
+	}
 </style>
-<script>
+<script type="text/javascript">
+	let grid;
+	
+	function load(){
+		drawGrid();
+	}
+	
+	function drawGrid(){
+		grid = new tui.Grid({
+			el: document.querySelector('#grid'),
+			scrollX: true,
+			scrollY: true,
+			bodyHeight:400,
+			rowHeaders: [{type:'checkbox'}],
+			columns: [
+				{
+				header: '번호',
+				name: 'STDNUMBER',
+				width:'200',
+				},
+				{
+				header: '이름',
+				name: 'STDNAME',
+				width:'200',
+				editor: 'text'
+				},
+			]
+			});
+	}
+
 	function search(){
 		let classId = document.querySelector("#search").value;
 		let param = {class_id:classId};
@@ -55,19 +96,138 @@
 			let listItem = document.createElement("li");
 			
 			listItem.id = "listItem_"+data[idx].CLASS_ID;
-			listItem.textContent = data[idx].DESC;
+			listItem.textContent = data[idx].CLASS_NM;
 			listItem.data = data[idx].CLASS_ID;
+			listItem.onclick = itemClick;
 			
 			list.appendChild(listItem);
 		}
 	}
+	
+	function itemClick(){
+		let classId = this.data;
+		let param = {class_id:classId};
+		ajaxRequest("/retrieveClass",param,loadForm);
+	}
+	
+	function loadForm(data){
+		document.querySelector("#class_id").disabled = true;
+		document.querySelector("#class_id").value = data["CLASS_ID"]
+		document.querySelector("#class_nm").value = data["CLASS_NM"]
+		document.querySelector("#teacher").value = data["TEACHER"]
+
+		document.querySelector("#insertStudents").disabled = false;
+		document.querySelector("#deleteStudents").disabled = false;
+		
+		document.querySelector("#insert").disabled = true;
+		document.querySelector("#update").disabled = false;
+		document.querySelector("#delete").disabled = false;
+		
+		let classId = data["CLASS_ID"];
+		let param = {class_id:classId};
+		ajaxRequest("/retrieveStudents",param,loadGrid);
+	}
+	
+	function loadGrid(data){
+		let gridData = new Array();
+		for(idx in data){
+			let rowData = data[idx];
+			gridData.push(rowData);
+		}
+		grid.resetData(gridData);
+	}
+	
+	function insertClass(){
+		let classId = document.querySelector("#class_id").value;
+		let classNm = document.querySelector("#class_nm").value;
+		let teacher = document.querySelector("#teacher").value;
+		let gridData = grid.getCheckedRows();
+		let param = {class_id:classId, class_nm:classNm, teacher:teacher, gridData:gridData};
+		ajaxRequest("/insertClass",param,insertCallback);
+	}
+	
+	function updateClass(){
+		let classId = document.querySelector("#class_id").value;
+		let classNm = document.querySelector("#class_nm").value;
+		let teacher = document.querySelector("#teacher").value;
+		let gridData = grid.getCheckedRows();
+		let param = {class_id:classId, class_nm:classNm, teacher:teacher, gridData:gridData};
+		ajaxRequest("/updateClass",param,updateCallback);
+	}
+	
+	function deleteClass(){
+		let classId = document.querySelector("#class_id").value;
+		let param = {class_id:classId};
+		ajaxRequest("/deleteClass",param,init);
+	}
+	
+	function insertCallback(data){
+		let classId = data["class_id"];
+		let param = {class_id:classId};
+		ajaxRequest("/retrieveClass",param,loadForm);
+	}
+	
+	function updateCallback(data){
+		let classId = data["class_id"];
+		let param = {class_id:classId};
+		ajaxRequest("/retrieveClass",param,loadForm);
+	}
+	
+	function addRow(){
+		let idx = grid.getRowCount();
+		grid.appendRow({},{at:grid.getRowCount()});
+		grid.check(idx);
+	}
+	
+	function deleteRow(){
+		grid.removeCheckedRows();
+	}
+	
+	function insertStudents(){
+		let classId = document.querySelector("#class_id").value;
+		let gridData = grid.getCheckedRows();
+		let param = {class_id:classId, gridData:gridData};
+		ajaxRequest("/insertStudents",param,updateCallback);
+	}
+	
+	function deleteStudents(){
+		let classId = document.querySelector("#class_id").value;
+		let gridData = grid.getCheckedRows();
+		let param = {class_id:classId, gridData:gridData};
+		ajaxRequest("/deleteStudents",param,updateCallback);
+	}	
+	
+	function addClass(){
+		document.querySelector("#class_id").disabled = false;
+		document.querySelector("#class_id").value = "";
+		document.querySelector("#class_nm").value = "";
+		document.querySelector("#teacher").value = "";
+		grid.clear();
+		
+		document.querySelector("#insertStudents").disabled = true;
+		document.querySelector("#deleteStudents").disabled = true;
+		
+		document.querySelector("#insert").disabled = false;
+		document.querySelector("#update").disabled = true;
+		document.querySelector("#delete").disabled = true;
+	}
+	
+	function init(){
+		document.querySelector("#class_id").disabled = true;
+		document.querySelector("#class_id").value = "";
+		document.querySelector("#class_nm").value = "";
+		document.querySelector("#teacher").value = "";
+		grid.clear();
+		search();
+	}	
 </script>
-<body>
+<body onload="load()">
 	<main id="main">
 		<section id="listSection">
 			<div id="searchBar">
 				<input id="search">
 				<button id="searchBtn" onclick="search()">조회</button>
+				<button id="addClassBtn" onclick="addClass()">신규</button>
 			</div>
 			<div id="listWrapper">
 				<ul id="list">
@@ -76,8 +236,29 @@
 		</section>
 		<section id="contentsSection">
 			<section id="formSection">
+				<div id="buttons">
+					<button id="insert" onclick="insertClass()">등록</button>
+					<button id="update" onclick="updateClass()">수정</button>
+					<button id="delete" onclick="deleteClass()">삭제</button>
+				</div>
+				<div>
+					<label>클래스ID</label><input id="class_id" disabled="disabled">
+				</div>
+				<div>
+					<label>클래스명</label><input id="class_nm">
+				</div>
+				<div>
+					<label>선생님</label><input id="teacher">				
+				</div>
 			</section>
 			<section id="gridSection">
+				<div id="gridButtons">
+					<button id="addRowBtn" onclick="addRow()">행추가</button>
+					<button id="deleteRowBtn" onclick="deleteRow()">행삭제</button>
+					<button id="insertStudents" onclick="insertStudents()">학생등록</button>
+					<button id="deleteStudents" onclick="deleteStudents()">학생삭제</button>
+				</div>
+				<div id="grid"></div>
 			</section>
 		</section>
 	</main>

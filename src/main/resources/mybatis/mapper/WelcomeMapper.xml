@@ -8,6 +8,10 @@
 		SELECT
 			*
 		FROM CLASS
+		WHERE 1=1
+		<if test='class_id != null and !class_id.equals("")'>
+		AND CLASS_ID = #{class_id}
+		</if>
 	</select>
 
 </mapper>

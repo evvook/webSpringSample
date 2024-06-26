@@ -13,7 +13,7 @@ public class WelcomeService {
 	@Autowired
 	WelcomeRepository welcomeRepository;
 	
-	public List<Map<String,String>> retrieveClass(){
-		return welcomeRepository.retrieveClass();
+	public List<Map<String,String>> retrieveClass(Map<String, String> param){
+		return welcomeRepository.retrieveClass(param);
 	}
 }

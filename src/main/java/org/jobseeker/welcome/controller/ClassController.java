@@ -15,13 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class WelcomeController {
+public class ClassController {
 
 	@Autowired
 	WelcomeService welcomeService;
 	
 	@ResponseBody
-	@RequestMapping(value="/welcome",method={RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="/retrieveClassList",method={RequestMethod.GET, RequestMethod.POST})
 	public List<Map<String,String>> retrieveClass(@RequestBody Map<String,String> param) {
 		return welcomeService.retrieveClass(param);
 	}

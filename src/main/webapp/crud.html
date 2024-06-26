@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/js/common.js"></script>
+</head>
+<style>
+	html, body{
+		width:99%;
+		height:99%;
+	}
+	#main{
+		display:flex;
+		width:100%;
+		height:100%;
+	}
+	#listSection{
+		display:flex;
+		flex-direction: column;
+		width:250px;
+	}
+	#contentsSection{
+		display:flex;
+		width:100%;
+	}
+	
+	#search{
+		width:100px;
+	}
+	
+	#list{
+	    padding-left: 0px;
+		list-style: none;
+	}
+	#list li{
+		padding:10px;
+	}
+	#list li:hover{
+	    background-color:lightgray;
+	}
+</style>
+<script>
+	function search(){
+		let classId = document.querySelector("#search").value;
+		let param = {class_id:classId};
+		ajaxRequest("/retrieveClassList",param,loadList);
+	}
+	
+	function loadList(data){
+		let list = document.querySelector("#list");
+		list.replaceChildren();
+		
+		for(let idx in data){
+			let listItem = document.createElement("li");
+			
+			listItem.id = "listItem_"+data[idx].CLASS_ID;
+			listItem.textContent = data[idx].DESC;
+			listItem.data = data[idx].CLASS_ID;
+			
+			list.appendChild(listItem);
+		}
+	}
+</script>
+<body>
+	<main id="main">
+		<section id="listSection">
+			<div id="searchBar">
+				<input id="search">
+				<button id="searchBtn" onclick="search()">조회</button>
+			</div>
+			<div id="listWrapper">
+				<ul id="list">
+				</ul>
+			</div>
+		</section>
+		<section id="contentsSection">
+			<section id="formSection">
+			</section>
+			<section id="gridSection">
+			</section>
+		</section>
+	</main>
+</body>
+</html>

@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface WelcomeRepository {
 
-	public List<Map<String,String>> retrieveClass();
+	public List<Map<String,String>> retrieveClass(Map<String, String> param);
 }

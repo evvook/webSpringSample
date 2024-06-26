@@ -6,7 +6,17 @@
 </head>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
-
+<style>
+	#class_id{
+		width:100px;
+	}
+	.box{
+		width:20px;
+		height:20px;
+		margin:5px;
+		background-color: red;
+	}
+</style>
 <script type="text/javascript">
 	let grid;
 	
@@ -78,7 +88,12 @@
 	}
 	
 	function welcome(){
-		ajaxRequest("/welcome",{},loadGrid)
+		let class_id = document.querySelector("#class_id").value;
+		if(["","A","B","C","D"].indexOf(class_id)<0){
+			alert("없는 클래스 입니다.");
+			return;
+		}
+		ajaxRequest("/welcome",{class_id:class_id},loadGrid)
 	}
 	
 	function callback(result){
@@ -89,6 +104,18 @@
 <button onclick="welcome()">
 	안녕하세요
 </button>
+<select id="class_id">
+	<option></option>
+	<option>A</option>
+	<option>B</option>
+	<option>C</option>
+	<option>D</option>
+	<option>E</option>
+</select>
 <div class="grid" id="grid"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
 </body>
 </html>

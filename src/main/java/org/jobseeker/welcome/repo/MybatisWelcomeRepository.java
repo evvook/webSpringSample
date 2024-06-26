@@ -16,7 +16,7 @@ public class MybatisWelcomeRepository implements WelcomeRepository{
 	private SqlSession session;
 	
 	@Override
-	public List<Map<String,String>> retrieveClass(){
-		return session.selectList(nameSpace+".retrieveClass");
+	public List<Map<String,String>> retrieveClass(Map<String,String> param){
+		return session.selectList(nameSpace+".retrieveClass", param);
 	}
 }

@@ -220,6 +220,43 @@
 		grid.clear();
 		search();
 	}	
+
+	
+	function upload(){
+		ajaxRequest('/excelUpload');
+	}
+
+	function ajaxRequest(url){
+		debugger;
+		var file = document.querySelector("#inputExcelFile");
+		var fileData = new FormData();
+		
+		fileData.append("uploadfile",file.files[0]);
+		
+		/* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+		httpRequest = new XMLHttpRequest();
+		httpRequest.onreadystatechange = () => {
+	    	/* readyState가 Done이고 응답 값이 200일 때, 받아온 response로 처리*/
+		    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+			      if (httpRequest.status === 200) {
+			    	alert("Uploaded");
+			      } else {
+			        alert('request에 뭔가 문제가 있어요.');
+			      }
+			}
+	    };
+	    
+	    /* Post 방식으로 요청 */
+	    httpRequest.open('POST', url, true);//경로 잡아줌
+	    /* Response Type을 Json으로 사전 정의 */
+	    httpRequest.responseType = "json";
+	    /* 요청 Header에 컨텐츠 타입은 Json으로 사전 정의 */
+	    //httpRequest.setRequestHeader('Content-Type', 'application/json');
+	    /* 정의된 서버에 Json 형식의 요청 Data를 포함하여 요청을 전송 */
+	    httpRequest.send(fileData);
+	}	
+	
+	
 </script>
 <body onload="load()">
 	<main id="main">
@@ -253,6 +290,11 @@
 			</section>
 			<section id="gridSection">
 				<div id="gridButtons">
+					<form id="form" method="post" enctype="multipart/form-data">
+						<input type="file" id="inputExcelFile" name="inputExcelFile"/>
+						<button type="button" id="uploadBtn" onclick="upload()">업로드</button>
+					</form>
+				
 					<button id="addRowBtn" onclick="addRow()">행추가</button>
 					<button id="deleteRowBtn" onclick="deleteRow()">행삭제</button>
 					<button id="insertStudents" onclick="insertStudents()">학생등록</button>

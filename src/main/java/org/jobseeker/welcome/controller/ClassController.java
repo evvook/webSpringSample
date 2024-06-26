@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -68,4 +70,11 @@ public class ClassController {
 	public Map<String,Object> deleteClass(@RequestBody Map<String,Object> param) {
 		return classService.deleteClass(param);
 	}
+	
+//	@ResponseBody
+//	@RequestMapping(value="/excelUpload",method= {RequestMethod.POST})
+//	public Map<String,Object> excelUpload(MultipartHttpServletRequest request) {
+//		MultipartFile file= request.getFile("uploadfile");
+//		return classService.uploadExcel(file);
+//	}
 }
